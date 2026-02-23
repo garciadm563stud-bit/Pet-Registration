@@ -1,0 +1,51 @@
+/* Scope fixes only inside the shadcn sidebar */
+[data-sidebar] a,
+[data-sidebar] a:hover,
+[data-sidebar] a:focus,
+[data-sidebar] a:active {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+[data-sidebar] button,
+[data-sidebar] .btn,
+[data-sidebar] .nav-link {
+  all: unset;
+}
+
+/* Bring back needed button behavior */
+[data-sidebar] button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Prevent Bootstrap from changing list/menu spacing */
+[data-sidebar] ul,
+[data-sidebar] li {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+/* Fix Bootstrap affecting shadcn breadcrumb/header */
+[data-slot="breadcrumb"],
+[data-slot="breadcrumb-list"],
+[data-slot="breadcrumb-item"] {
+  display: flex !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+[data-slot="breadcrumb-list"] {
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+}
+
+[data-slot="breadcrumb-page"] {
+  display: inline-flex !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
