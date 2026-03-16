@@ -15,6 +15,7 @@ class Vaccine extends Model
         'lot_batch_no',
         'next_schedule',
         'administering_personnel',
+         'vaccine_brand',
     ];
 
     public function pet()

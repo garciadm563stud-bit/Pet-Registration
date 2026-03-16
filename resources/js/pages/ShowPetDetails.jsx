@@ -2,22 +2,43 @@ import AppLayout from "@/layouts/app-layout";
 import React from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
 import Swal from "sweetalert2";
-
+import CreatableSelect from "react-select/creatable";
+// const VACCINE_OPTIONS = [
+//   "Anti-Rabies",
+//   "5-in-1 (DHPP)",
+//   "6-in-1 (DHPPiL)",
+//   "Parvo",
+//   "Distemper",
+//   "Bordetella (Kennel Cough)",
+//   "Leptospirosis",
+//   "Feline 3-in-1 (FVRCP)",
+//   "Feline Leukemia (FeLV)",
+//   "Deworming",
+//   "Tick/Flea Prevention",
+//   "Other",
+// ];
 const VACCINE_OPTIONS = [
-  "Anti-Rabies",
-  "5-in-1 (DHPP)",
-  "6-in-1 (DHPPiL)",
-  "Parvo",
-  "Distemper",
-  "Bordetella (Kennel Cough)",
-  "Leptospirosis",
-  "Feline 3-in-1 (FVRCP)",
-  "Feline Leukemia (FeLV)",
-  "Deworming",
-  "Tick/Flea Prevention",
-  "Other",
+  { value: "Anti-Rabies", label: "Anti-Rabies" },
+  { value: "5-in-1 (DHPP)", label: "5-in-1 (DHPP)" },
+  { value: "6-in-1 (DHPPiL)", label: "6-in-1 (DHPPiL)" },
+  { value: "Parvo", label: "Parvo" },
+  { value: "Distemper", label: "Distemper" },
+  { value: "Bordetella", label: "Bordetella" },
+  { value: "Leptospirosis", label: "Leptospirosis" },
+  { value: "FVRCP", label: "Feline 3-in-1 (FVRCP)" },
+  { value: "FeLV", label: "Feline Leukemia (FeLV)" },
+  { value: "Deworming", label: "Deworming" },
+  { value: "Tick/Flea", label: "Tick/Flea Prevention" },
 ];
 
+const VACCINE_BRANDS = [
+  { value: "Nobivac", label: "Nobivac" },
+  { value: "Defensor", label: "Defensor" },
+  { value: "Rabisin", label: "Rabisin" },
+  { value: "Rabigen", label: "Rabigen" },
+  { value: "Vanguard", label: "Vanguard" },
+  { value: "Duramune", label: "Duramune" },
+];
 export default function ShowPetDetails({ owner, pet, vaccines }) {
   const { flash } = usePage().props;
 
@@ -39,10 +60,20 @@ export default function ShowPetDetails({ owner, pet, vaccines }) {
     }
   }, [flash]);
 
-  const ownerPhoto = owner?.photo_path ? `/storage/${owner.photo_path}` : null;
-  const petPhoto = pet?.photo_path ? `/storage/${pet.photo_path}` : null;
+  // const ownerPhoto = owner?.photo_path ? `/storage/${owner.photo_path}` : null;
+  // const petPhoto = pet?.photo_path ? `/storage/${pet.photo_path}` : null;
+const ownerPhoto = owner?.photo_path
+  ? owner.photo_path.startsWith("http")
+    ? owner.photo_path
+    : `/storage/${owner.photo_path}`
+  : null;
 
-  const birthDate = pet?.birth_date ? String(pet.birth_date).slice(0, 10) : "—";
+const petPhoto = pet?.photo_path
+  ? pet.photo_path.startsWith("http")
+    ? pet.photo_path
+    : `/storage/${pet.photo_path}`
+  : null;
+  const age = pet?.age ?? "—";
 
   const hasVaccines = (vaccines?.data?.length ?? 0) > 0;
   const hasVaxMultiplePages = (vaccines?.links?.length ?? 0) > 3;
@@ -56,6 +87,8 @@ const vaccineFormRef = React.useRef(null);
     lot_batch_no: "",
     next_schedule: "",
     administering_personnel: "",
+    vaccine_brand: "",
+    
   });
 
   function openAddVaccine() {
@@ -72,6 +105,7 @@ const vaccineFormRef = React.useRef(null);
       date_administered: v.date_administered ?? "",
       vaccine_choice: v.vaccine_choice ?? "",
       custom_vaccine_name: v.custom_vaccine_name ?? "",
+       vaccine_brand: v.vaccine_brand ?? "",
       lot_batch_no: v.lot_batch_no ?? "",
       next_schedule: v.next_schedule ?? "",
       administering_personnel: v.administering_personnel ?? "",
@@ -154,7 +188,12 @@ const tyyyy = tomorrow.getFullYear();
 const tmm = String(tomorrow.getMonth() + 1).padStart(2, "0");
 const tdd = String(tomorrow.getDate()).padStart(2, "0");
 const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
-
+const capitalizeWords = (text) => {
+  if (!text) return "";
+  return text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
   return (
     <AppLayout>
       {/* SQUARE IMAGE POPUP */}
@@ -211,20 +250,35 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
       {/* LEFT PHOTO */}
       <div className="col-12 col-md-3 d-flex justify-content-center align-items-center">
         {ownerPhoto ? (
+          // <img
+          //   src={ownerPhoto}
+          //   alt="owner"
+          //   onClick={() => setViewImage(ownerPhoto)}
+          //   title="Click to enlarge"
+          //    style={{
+          //             width: 170,
+          //             height: 170,
+          //             objectFit: "cover",
+          //             borderRadius: 16,
+          //             border: "1px solid #eee",
+          //             cursor: "pointer",
+          //           }}
+          // />
           <img
-            src={ownerPhoto}
-            alt="owner"
-            onClick={() => setViewImage(ownerPhoto)}
-            title="Click to enlarge"
-             style={{
-                      width: 170,
-                      height: 170,
-                      objectFit: "cover",
-                      borderRadius: 16,
-                      border: "1px solid #eee",
-                      cursor: "pointer",
-                    }}
-          />
+  src={ownerPhoto}
+  onError={(e) => (e.target.src = "/images/no-image.png")}
+  alt="owner"
+  onClick={() => setViewImage(ownerPhoto)}
+  title="Click to enlarge"
+  style={{
+    width: 170,
+    height: 170,
+    objectFit: "cover",
+    borderRadius: 16,
+    border: "1px solid #eee",
+    cursor: "pointer",
+  }}
+/>
         ) : (
           <div
             className="d-flex align-items-center justify-content-center text-muted"
@@ -243,7 +297,9 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
       {/* RIGHT INFO */}
       <div className="col-12 col-md-9">
         <div className="fw-bold fs-4 mb-3">
-          {owner.first_name} {owner.middle_name ?? ""} {owner.last_name}
+          {capitalizeWords(owner.first_name)}{" "}
+{owner.middle_name ? capitalizeWords(owner.middle_name) : ""}{" "}
+{capitalizeWords(owner.last_name)}
         </div>
 
         <div className="row g-3">
@@ -251,7 +307,7 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
           <div className="col-12 col-md-6">
             <div className="mb-3">
               <div className="text-muted small">Address</div>
-              <div className="fw-semibold">{owner.address ?? "—"}</div>
+              <div className="fw-semibold"> {capitalizeWords(owner.address ?? "—")}</div>
             </div>
 
             <div className="mb-3">
@@ -299,20 +355,35 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
 
               <div className="col-12 col-md-3 d-flex justify-content-center">
                 {petPhoto ? (
+                  // <img
+                  //   src={petPhoto}
+                  //   alt="pet"
+                  //   onClick={() => setViewImage(petPhoto)}
+                  //   title="Click to enlarge"
+                  //   style={{
+                  //     width: 170,
+                  //     height: 170,
+                  //     objectFit: "cover",
+                  //     borderRadius: 16,
+                  //     border: "1px solid #eee",
+                  //     cursor: "pointer",
+                  //   }}
+                  // />
                   <img
-                    src={petPhoto}
-                    alt="pet"
-                    onClick={() => setViewImage(petPhoto)}
-                    title="Click to enlarge"
-                    style={{
-                      width: 170,
-                      height: 170,
-                      objectFit: "cover",
-                      borderRadius: 16,
-                      border: "1px solid #eee",
-                      cursor: "pointer",
-                    }}
-                  />
+  src={petPhoto}
+  onError={(e) => (e.target.src = "/images/no-image.png")}
+  alt="pet"
+  onClick={() => setViewImage(petPhoto)}
+  title="Click to enlarge"
+  style={{
+    width: 170,
+    height: 170,
+    objectFit: "cover",
+    borderRadius: 16,
+    border: "1px solid #eee",
+    cursor: "pointer",
+  }}
+/>
                 ) : (
                   <div
                     className="d-flex align-items-center justify-content-center text-muted"
@@ -328,64 +399,90 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
                 )}
               </div>
 
-              <div className="col-12 col-md-9">
-                <div className="fw-bold fs-5 mb-2 text-uppercase">
-                  {pet.pet_name ?? "—"}
-                </div>
+            <div className="col-12 col-md-9">
+  <div className="fw-bold fs-5 mb-3">
+    
+    {capitalizeWords(pet.pet_name ?? "—")}
+  </div>
 
-                <div className="row g-2 small">
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Pet ID:</span>{" "}
-                    <span className="fw-semibold">{pet.pet_uid ?? "—"}</span>
-                  </div>
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Registration No:</span>{" "}
-                    <span className="fw-semibold">
-                      {pet.registration_no ?? "—"}
-                    </span>
-                  </div>
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Paid OR No:</span>{" "}
-                    <span className="fw-semibold">{pet.or_number ?? "—"}</span>
-                  </div>
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Species:</span>{" "}
-                    <span className="fw-semibold">{pet.species ?? "—"}</span>
-                  </div>
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Breed:</span>{" "}
-                    <span className="fw-semibold">{pet.breed ?? "—"}</span>
-                  </div>
+  <div className="row small">
 
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Birth Date:</span>{" "}
-                    <span className="fw-semibold">{birthDate}</span>
-                  </div>
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Age:</span>{" "}
-                    <span className="fw-semibold">{pet.age_label ?? "—"}</span>
-                  </div>
+    {/* LEFT COLUMN */}
+    <div className="col-12 col-md-6">
+      <div className="mb-2">
+        <span className="text-muted">Pet ID:</span>{" "}
+        <span className="fw-semibold">{pet.pet_uid ?? "—"}</span>
+      </div>
 
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Gender:</span>{" "}
-                    <span className="fw-semibold">{pet.gender ?? "—"}</span>
-                  </div>
-                  <div className="col-12 col-md-6">
-                    <span className="text-muted">Color:</span>{" "}
-                    <span className="fw-semibold">{pet.color ?? "—"}</span>
-                  </div>
-                  <div className="col-12">
-                    <span className="text-muted">Markings:</span>{" "}
-                    <span className="fw-semibold">{pet.markings ?? "—"}</span>
-                  </div>
-                  <div className="col-12">
-                    <span className="text-muted">Confinement:</span>{" "}
-                    <span className="fw-semibold">
-                      {pet.confinement_status ?? "—"}
-                    </span>
-                  </div>
-                </div>
-              </div>
+      <div className="mb-2">
+        <span className="text-muted">Registration No:</span>{" "}
+        <span className="fw-semibold">{pet.registration_no ?? "—"}</span>
+      </div>
+
+      <div className="mb-2">
+        <span className="text-muted">Paid OR No:</span>{" "}
+        <span className="fw-semibold">{pet.or_number ?? "—"}</span>
+      </div>
+
+      <div className="mb-2">
+        <span className="text-muted">Species:</span>{" "}
+        <span className="fw-semibold">{pet.species ?? "—"}</span>
+      </div>
+
+      <div className="mb-2">
+        <span className="text-muted">Breed:</span>{" "}
+        <span className="fw-semibold">{capitalizeWords(pet.breed ?? "—")}</span>
+      </div>
+
+      <div className="mb-2">
+        <span className="text-muted">Age:</span>{" "}
+        <span className="fw-semibold">{capitalizeWords(pet.age ?? "—")}</span>
+      </div>
+    </div>
+
+    {/* RIGHT COLUMN */}
+    <div className="col-12 col-md-6">
+      <div className="mb-2">
+        <span className="text-muted">Gender:</span>{" "}
+        <span className="fw-semibold">{pet.gender ?? "—"}</span>
+      </div>
+
+      <div className="mb-2">
+        <span className="text-muted">Color:</span>{" "}
+        <span className="fw-semibold">{capitalizeWords(pet.color ?? "—")}</span>
+      </div>
+
+      <div className="mb-2">
+        <span className="text-muted">Registered:</span>{" "}
+        <span className="fw-semibold">
+          {pet.created_at
+            ? new Date(pet.created_at).toISOString().slice(0, 10)
+            : "—"}
+        </span>
+      </div>
+
+      <div className="mb-2">
+        <span className="text-muted">Markings:</span>{" "}
+        <span className="fw-semibold">{capitalizeWords(pet.markings ?? "—")}</span>
+      </div>
+
+      <div className="mb-2">
+        <span className="text-muted">Confinement:</span>{" "}
+        <span className="fw-semibold">
+          {pet.confinement_status ?? "—"}
+        </span>
+      </div>
+
+         <div className="mb-2">
+        <span className="text-muted">Sterilized:</span>{" "}
+        <span className="fw-semibold">
+          {pet.sterilized ?? "—"}
+        </span>
+      </div>
+    </div>
+
+  </div>
+</div>
             </div>
           </div>
         </div>
@@ -440,23 +537,46 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
 
               <div className="col-12 col-md-4">
                 <label className="form-label">Vaccine (Common)</label>
-                <select
-                  className="form-select"
-                  value={vaxForm.data.vaccine_choice}
-                  onChange={(e) => vaxForm.setData("vaccine_choice", e.target.value)}
-                >
-                  <option value="">Select Vaccine</option>
-                  {VACCINE_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
+                <CreatableSelect
+  placeholder="Select or type vaccine..."
+  options={VACCINE_OPTIONS}
+  isClearable
+  value={
+    vaxForm.data.vaccine_choice
+      ? { label: vaxForm.data.vaccine_choice, value: vaxForm.data.vaccine_choice }
+      : null
+  }
+  onChange={(selected) =>
+    vaxForm.setData("vaccine_choice", selected?.value ?? "")
+  }
+/>
                 {vaxForm.errors.vaccine_choice && (
                   <div className="text-danger small">{vaxForm.errors.vaccine_choice}</div>
                 )}
               </div>
+<div className="col-12 col-md-4">
+  <label className="form-label">Vaccine Brand</label>
 
+  <CreatableSelect
+    placeholder="Select or type brand..."
+    options={VACCINE_BRANDS}
+    isClearable
+    value={
+      vaxForm.data.vaccine_brand
+        ? { label: vaxForm.data.vaccine_brand, value: vaxForm.data.vaccine_brand }
+        : null
+    }
+    onChange={(selected) =>
+      vaxForm.setData("vaccine_brand", selected?.value ?? "")
+    }
+  />
+
+  {vaxForm.errors.vaccine_brand && (
+    <div className="text-danger small">
+      {vaxForm.errors.vaccine_brand}
+    </div>
+  )}
+</div>
               <div className="col-12 col-md-4">
                 <label className="form-label">Lot / Batch No.</label>
                 <input
@@ -555,6 +675,7 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
               <tr>
                 <th>Date Administered</th>
                 <th>Vaccine Name</th>
+                <th>Vaccine Brand</th>
                 <th>Lot/Batch No</th>
                 <th>Next Schedule</th>
                 <th>Administering Personnel</th>
@@ -566,10 +687,11 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
                 vaccines.data.map((v) => (
                   <tr key={v.id}>
                     <td>{v.date_administered ?? "—"}</td>
-                    <td className="fw-semibold">{v.vaccine_name ?? "—"}</td>
+                    <td> {capitalizeWords(v.vaccine_name ?? "—")}</td>
+                    <td>{capitalizeWords(v.vaccine_brand ?? "—")}</td>
                     <td>{v.lot_batch_no ?? "—"}</td>
                     <td>{v.next_schedule ?? "—"}</td>
-                    <td>{v.administering_personnel ?? "—"}</td>
+                    <td>{capitalizeWords(v.administering_personnel ?? "—")}</td>
                     <td>
                       <div className="d-flex gap-2">
                         <button className="btn btn-warning btn-sm" onClick={() => openEditVaccine(v)}>
@@ -584,7 +706,7 @@ const tomorrowStr = `${tyyyy}-${tmm}-${tdd}`;
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center text-muted p-4">
+                  <td colSpan="7" className="text-center text-muted p-4">
                     No vaccine records yet.
                   </td>
                 </tr>

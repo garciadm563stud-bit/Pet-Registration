@@ -168,7 +168,9 @@ class OwnerController extends Controller
         'Tebag East',
         'Tebag West',
         'Tuliao',
-        'Ventinilla'
+        'Ventinilla',
+        'Villa ph. 112',
+        'Camella'
     ];
 
 

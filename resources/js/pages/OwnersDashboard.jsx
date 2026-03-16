@@ -731,39 +731,43 @@ function scrollToOwnerForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cameraOpen]);
 
-  function capturePhoto() {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!video || !canvas) return;
+ function capturePhoto() {
+  const video = videoRef.current;
+  const canvas = canvasRef.current;
+  if (!video || !canvas) return;
 
-    const w = video.videoWidth || 640;
-    const h = video.videoHeight || 480;
+  const w = video.videoWidth || 640;
+  const h = video.videoHeight || 480;
 
-    canvas.width = w;
-    canvas.height = h;
+  canvas.width = w;
+  canvas.height = h;
 
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0, w, h);
+  const ctx = canvas.getContext("2d");
 
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) return;
+  // ✅ Flip back before drawing (so saved image is NOT inverted)
+  ctx.translate(w, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, 0, 0, w, h);
 
-        const file = new File([blob], "owner_photo.jpg", { type: "image/jpeg" });
-        form.setData("photo", file);
-form.setData("remove_photo", false);
+  canvas.toBlob(
+    (blob) => {
+      if (!blob) return;
 
-        setPreviewImage((old) => {
-          if (old) URL.revokeObjectURL(old);
-          return URL.createObjectURL(file);
-        });
+      const file = new File([blob], "owner_photo.jpg", { type: "image/jpeg" });
+      form.setData("photo", file);
+      form.setData("remove_photo", false);
 
-        stopCamera();
-      },
-      "image/jpeg",
-      0.9
-    );
-  }
+      setPreviewImage((old) => {
+        if (old) URL.revokeObjectURL(old);
+        return URL.createObjectURL(file);
+      });
+
+      stopCamera();
+    },
+    "image/jpeg",
+    0.9
+  );
+}
 
   // Close camera when form closes/unmounts
   React.useEffect(() => {
@@ -816,7 +820,12 @@ function closeForm() {
 
   setShowForm(false);
 }
-
+const capitalizeWords = (text) => {
+  if (!text) return "";
+  return text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
   return (
     <AppLayout>
       {/* IMAGE VIEW MODAL */}
@@ -864,7 +873,7 @@ function closeForm() {
           <div className="col-12 col-md-3">
             <div className="card shadow-sm">
               <div className="card-body">
-                <div className="text-muted">Total Owners</div>
+                <div className="text-muted fw-bold">Total Owners</div>
                 <div className="fs-3 fw-bold">{summary?.totalOwners ?? 0}</div>
               </div>
             </div>
@@ -872,7 +881,7 @@ function closeForm() {
           <div className="col-12 col-md-3">
             <div className="card shadow-sm">
               <div className="card-body">
-                <div className="text-muted">Total Pets</div>
+                <div className="text-muted fw-bold">Total Pets</div>
                 <div className="fs-3 fw-bold">{summary?.totalPets ?? 0}</div>
               </div>
             </div>
@@ -880,7 +889,7 @@ function closeForm() {
           <div className="col-12 col-md-3">
             <div className="card shadow-sm">
               <div className="card-body">
-                <div className="text-muted">Total Dogs</div>
+                <div className="text-muted fw-bold">Total Dogs</div>
                 <div className="fs-3 fw-bold">{summary?.totalDogs ?? 0}</div>
               </div>
             </div>
@@ -888,7 +897,7 @@ function closeForm() {
           <div className="col-12 col-md-3">
             <div className="card shadow-sm">
               <div className="card-body">
-                <div className="text-muted">Total Cats</div>
+                <div className="text-muted fw-bold">Total Cats</div>
                 <div className="fs-3 fw-bold">{summary?.totalCats ?? 0}</div>
               </div>
             </div>
@@ -1142,6 +1151,7 @@ form.setData("remove_photo", false); // ✅ ADD
                                 background: "#000",
                                 maxHeight: 360,
                                 objectFit: "cover",
+                                transform: "scaleX(-1)",
                               }}
                             />
 
@@ -1309,15 +1319,13 @@ form.setData("remove_photo", false); // ✅ ADD
           <div className="card-header fw-bold">Owners</div>
           <div className="card-body p-0">
             <div className="table-responsive">
-              <table className="table table-striped table-hover mb-0 align-middle">
+              <table className="table table-striped table-hover mb-0 align-middle text-center">
                 <thead>
                   <tr>
                     <th style={{ width: 50 }}>#</th>
                     <th>Owner ID</th>
                     <th>Photo</th>
-                    <th>First Name</th>
-                    <th>Middle Name</th>
-                    <th>Last name</th>
+                    <th>Full Name</th>
                     <th>Address</th>
                     <th>Civil Status</th>
                     <th>Barangay</th>
@@ -1338,22 +1346,47 @@ form.setData("remove_photo", false); // ✅ ADD
                           {/* style={photoStyle}  */}
                           {/* <td>  delete*/}
                             
-  {o.photo_path ? (
-    <img
-      src={`/storage/${o.photo_path}`}
-      alt="owner"
-      style={{
-                                width: 56,
-                                height: 56,
-                                borderRadius: 14,
-                                objectFit: "cover",
-                                border: "1px solid #eee",
-                                cursor: "pointer"
-                              }}
-      onClick={() => setViewImage(`/storage/${o.photo_path}`)}
-      title="Click to enlarge"
-    />
-  ) : (
+{o.photo_path ? (
+
+    //  <img
+    //   src={`/storage/${o.photo_path}`}
+    //   alt="owner"
+    //   style={{
+    //                             width: 56,
+    //                             height: 56,
+    //                             borderRadius: 14,
+    //                             objectFit: "cover",
+    //                             border: "1px solid #eee",
+    //                             cursor: "pointer"
+    //                           }}
+    //   onClick={() => setViewImage(`/storage/${o.photo_path}`)}
+    //   title="Click to enlarge"
+    // />
+  <img
+    src={
+      o.photo_path.startsWith("http")
+        ? o.photo_path
+        : `/storage/${o.photo_path}`
+    }
+    alt="owner"
+    style={{
+      width: 56,
+      height: 56,
+      borderRadius: 14,
+      objectFit: "cover",
+      border: "1px solid #eee",
+      cursor: "pointer"
+    }}
+    onClick={() =>
+      setViewImage(
+        o.photo_path.startsWith("http")
+          ? o.photo_path
+          : `/storage/${o.photo_path}`
+      )
+    }
+    title="Click to enlarge"
+  />
+) :(
     <span className="text-muted">—</span>
   )}
 {/* </td> delete*/}
@@ -1361,10 +1394,12 @@ form.setData("remove_photo", false); // ✅ ADD
                           
                           
                         </td>
-                        <td>{o.first_name}</td>
-                        <td>{o.middle_name ?? ""}</td>
-                        <td>{o.last_name}</td>
-                        <td>{o.address}</td>
+                      <td>
+  {capitalizeWords(o.first_name)}{" "}
+  {o.middle_name ? `${capitalizeWords(o.middle_name)[0]}. ` : ""}
+  {capitalizeWords(o.last_name)}
+</td>
+                        <td>{capitalizeWords(o.address)}</td>
                         <td>{o.civil_status}</td>
                         <td>{o.barangay}</td>
                         <td>{o.sex}</td>
@@ -1394,7 +1429,7 @@ form.setData("remove_photo", false); // ✅ ADD
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="13" className="text-center p-4 text-muted">
+                      <td colSpan="11" className="text-center p-4 text-muted">
                         No owners found.
                       </td>
                     </tr>

@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { Users, Dog } from 'lucide-react';
+import { Users, Dog, BarChart3 } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
 import {
@@ -24,6 +24,12 @@ const mainNavItems: NavItem[] = [
         href: '/pets',
         icon: Dog,
     },
+    
+    {
+    title: 'Vaccination Reports',
+    href: '/vaccine-dashboard',
+    icon: BarChart3,
+},
 ];
 ;
 

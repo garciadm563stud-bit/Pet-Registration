@@ -19,30 +19,44 @@ class VaccineController extends Controller
         'Feline Leukemia (FeLV)',
         'Deworming',
         'Tick/Flea Prevention',
-        'Other',
+
+
+
     ];
 
-    private function validChoice(string $choice): bool
+    // private function validChoice(string $choice): bool
+    // {
+    //     return in_array($choice, $this->commonVaccines, true);
+    // }
+    private function validChoice(?string $choice): bool
     {
-        return in_array($choice, $this->commonVaccines, true);
+        return !empty(trim($choice));
     }
+    // private function finalName(string $choice, ?string $custom): array
+    // {
+    //     if ($choice === 'Other') {
+    //         $custom = trim((string) $custom);
+    //         return [
+    //             'vaccine_name' => $custom,
+    //             'custom_vaccine_name' => $custom,
+    //         ];
+    //     }
+
+    //     return [
+    //         'vaccine_name' => $choice,
+    //         'custom_vaccine_name' => null,
+    //     ];
+    // }
 
     private function finalName(string $choice, ?string $custom): array
     {
-        if ($choice === 'Other') {
-            $custom = trim((string) $custom);
-            return [
-                'vaccine_name' => $custom,
-                'custom_vaccine_name' => $custom,
-            ];
-        }
+        $name = trim($custom ?: $choice);
 
         return [
-            'vaccine_name' => $choice,
-            'custom_vaccine_name' => null,
+            'vaccine_name' => $name,
+            'custom_vaccine_name' => $custom ?: null,
         ];
     }
-
     public function store(Request $request, Pet $pet)
     {
         $data = $request->validate([
@@ -50,6 +64,7 @@ class VaccineController extends Controller
             'vaccine_choice' => ['required', 'string', 'max:255'],
             'custom_vaccine_name' => ['nullable', 'string', 'max:255'],
             'lot_batch_no' => ['nullable', 'string', 'max:255'],
+            'vaccine_brand' => ['nullable', 'string', 'max:255'],
             'next_schedule' => ['nullable', 'date'],
             'administering_personnel' => ['required', 'string', 'max:255'],
         ]);
@@ -72,6 +87,7 @@ class VaccineController extends Controller
             'lot_batch_no' => $data['lot_batch_no'] ?? null,
             'next_schedule' => $data['next_schedule'] ?? null,
             'administering_personnel' => $data['administering_personnel'] ?? null,
+            'vaccine_brand' => $data['vaccine_brand'] ?? null,
         ]);
 
         return back()->with('success', 'Vaccine added successfully!');
@@ -86,6 +102,7 @@ class VaccineController extends Controller
             'lot_batch_no' => ['nullable', 'string', 'max:255'],
             'next_schedule' => ['nullable', 'date'],
             'administering_personnel' => ['required', 'string', 'max:255'],
+            'vaccine_brand' => ['nullable', 'string', 'max:255'],
         ]);
 
         if (!$this->validChoice($data['vaccine_choice'])) {
@@ -106,6 +123,7 @@ class VaccineController extends Controller
             'lot_batch_no' => $data['lot_batch_no'] ?? null,
             'next_schedule' => $data['next_schedule'] ?? null,
             'administering_personnel' => $data['administering_personnel'] ?? null,
+            'vaccine_brand' => $data['vaccine_brand'] ?? null,
         ]);
 
         return back()->with('success', 'Vaccine updated successfully!');

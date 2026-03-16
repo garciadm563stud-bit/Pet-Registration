@@ -28,14 +28,14 @@ return new class extends Migration {
             // OFFICIAL FIELDS
             $table->enum('species', ['Dog', 'Cat']);
             $table->string('breed')->nullable();
-            $table->date('birth_date')->nullable();
+
 
             $table->enum('gender', ['Male', 'Female'])->nullable();
             $table->string('color')->nullable();
             $table->string('markings')->nullable();
-
+            $table->string('age')->nullable();
             $table->enum('confinement_status', ['Bound', 'Sometimes', 'Free'])->nullable();
-
+$table->string('sterilized')->nullable();
             // PET PHOTO
             $table->string('photo_path')->nullable();
 
@@ -47,6 +47,7 @@ return new class extends Migration {
             $table->index(['species']);
             $table->index(['breed']);
             $table->index(['date_registered']);
+            
         });
     }
 

@@ -5,11 +5,20 @@ import { router } from "@inertiajs/react";
 export default function ShowOwnerDetails({ owner, pets }) {
   const [viewImage, setViewImage] = React.useState(null);
 
-  const ownerPhoto = owner?.photo_path ? `/storage/${owner.photo_path}` : null;
-
+  // const ownerPhoto = owner?.photo_path ? `/storage/${owner.photo_path}` : null;
+const ownerPhoto = owner?.photo_path
+  ? owner.photo_path.startsWith("http")
+    ? owner.photo_path
+    : `/storage/${owner.photo_path}`
+  : null;
   const hasPets = (pets?.data?.length ?? 0) > 0;
   const hasMultiplePages = (pets?.links?.length ?? 0) > 3;
-
+const capitalizeWords = (text) => {
+  if (!text) return "";
+  return text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
   return (
     <AppLayout>
       {/* IMAGE POPUP MODAL */}
@@ -137,20 +146,34 @@ export default function ShowOwnerDetails({ owner, pets }) {
       {/* LEFT PHOTO */}
       <div className="col-12 col-md-3 d-flex justify-content-center align-items-center">
         {ownerPhoto ? (
+          // <img
+          //   src={ownerPhoto}
+          //   alt="owner"
+          //   onClick={() => setViewImage(ownerPhoto)}
+          //   title="Click to enlarge"
+          //   style={{
+          //     width: 170,
+          //     height: 170,
+          //     objectFit: "cover",
+          //     borderRadius: 16,
+          //     border: "1px solid #eee",
+          //     cursor: "pointer",
+          //   }}
+          // />
           <img
-            src={ownerPhoto}
-            alt="owner"
-            onClick={() => setViewImage(ownerPhoto)}
-            title="Click to enlarge"
-            style={{
-              width: 170,
-              height: 170,
-              objectFit: "cover",
-              borderRadius: 16,
-              border: "1px solid #eee",
-              cursor: "pointer",
-            }}
-          />
+  src={ownerPhoto}
+  onError={(e) => (e.target.src = "/images/no-image.png")}
+  alt="owner"
+  onClick={() => setViewImage(ownerPhoto)}
+  style={{
+    width: 170,
+    height: 170,
+    objectFit: "cover",
+    borderRadius: 16,
+    border: "1px solid #eee",
+    cursor: "pointer",
+  }}
+/>
         ) : (
           <div
             className="d-flex align-items-center justify-content-center text-muted"
@@ -169,7 +192,9 @@ export default function ShowOwnerDetails({ owner, pets }) {
       {/* RIGHT INFO */}
       <div className="col-12 col-md-9">
         <div className="fw-bold fs-4 mb-3">
-          {owner.first_name} {owner.middle_name ?? ""} {owner.last_name}
+         {capitalizeWords(owner.first_name)}{" "}
+{owner.middle_name ? capitalizeWords(owner.middle_name) : ""}{" "}
+{capitalizeWords(owner.last_name)}
         </div>
 
         <div className="row g-3">
@@ -177,7 +202,7 @@ export default function ShowOwnerDetails({ owner, pets }) {
           <div className="col-12 col-md-6">
             <div className="mb-3">
               <div className="text-muted small">Address</div>
-              <div className="fw-semibold">{owner.address ?? "—"}</div>
+              <div className="fw-semibold"> {capitalizeWords(owner.address ?? "—")}</div>
             </div>
 
             <div className="mb-3">
@@ -218,15 +243,19 @@ export default function ShowOwnerDetails({ owner, pets }) {
         {/* PETS SECTION */}
         <div className="d-flex align-items-center justify-content-between mb-2">
           <div className="fw-bold">Registered Pets</div>
-          <div className="text-muted small">{pets?.total ?? 0} total</div>
+          <div className=" small fw-bold">{pets?.total ?? 0} Total</div>
         </div>
 
         {hasPets ? (
           <>
             <div className="row g-3">
               {pets.data.map((pet) => {
-                const petPhoto = pet.photo_path ? `/storage/${pet.photo_path}` : null;
-
+                // const petPhoto = pet.photo_path ? `/storage/${pet.photo_path}` : null;
+const petPhoto = pet.photo_path
+  ? pet.photo_path.startsWith("http")
+    ? pet.photo_path
+    : `/storage/${pet.photo_path}`
+  : null;
                 return (
                   <div className="col-12 col-md-6 col-lg-4" key={pet.id}>
                     <div className="card shadow-sm h-100" style={{ borderRadius: 18 }}>
@@ -235,20 +264,34 @@ export default function ShowOwnerDetails({ owner, pets }) {
                           {/* LEFT SIDE - PHOTO */}
                           <div>
                             {petPhoto ? (
+                              // <img
+                              //   src={petPhoto}
+                              //   alt="pet"
+                              //   onClick={() => setViewImage(petPhoto)}
+                              //   title="Click to enlarge"
+                              //   style={{
+                              //     width: 120,
+                              //     height: 120,
+                              //     objectFit: "cover",
+                              //     borderRadius: 14,
+                              //     border: "1px solid #eee",
+                              //     cursor: "pointer",
+                              //   }}
+                              // />
                               <img
-                                src={petPhoto}
-                                alt="pet"
-                                onClick={() => setViewImage(petPhoto)}
-                                title="Click to enlarge"
-                                style={{
-                                  width: 120,
-                                  height: 120,
-                                  objectFit: "cover",
-                                  borderRadius: 14,
-                                  border: "1px solid #eee",
-                                  cursor: "pointer",
-                                }}
-                              />
+  src={petPhoto}
+  onError={(e) => (e.target.src = "/images/no-image.png")}
+  alt="pet"
+  onClick={() => setViewImage(petPhoto)}
+  style={{
+    width: 120,
+    height: 120,
+    objectFit: "cover",
+    borderRadius: 14,
+    border: "1px solid #eee",
+    cursor: "pointer",
+  }}
+/>
                             ) : (
                               <div
                                 className="d-flex align-items-center justify-content-center text-muted"
@@ -288,7 +331,7 @@ export default function ShowOwnerDetails({ owner, pets }) {
 
                               <div>
                                 <span className="text-muted">Breed:</span>{" "}
-                                <span className="fw-semibold">{pet.breed ?? "—"}</span>
+                                <span className="fw-semibold">{capitalizeWords(pet.breed ?? "—")}</span>
                               </div>
                             </div>
 

@@ -85,3 +85,15 @@ Route::delete('/vaccines/{vaccine}', [VaccineController::class, 'destroy'])->nam
 Route::get('/pets/{pet}/certificate', [PetController::class, 'downloadCertificate'])
     ->name('pets.certificate');
 Route::get('/owners/coupon/download', [OwnerController::class, 'downloadCoupon']);
+
+Route::get('/pets/coupon/download', [PetController::class, 'downloadForm']);
+
+use App\Http\Controllers\VaccineDashboardController;
+
+Route::get('/vaccine-dashboard', [VaccineDashboardController::class, 'index'])
+    ->name('vaccine.dashboard');
+Route::get('/vaccine-dashboard-export', [VaccineDashboardController::class, 'export'])
+    ->name('vaccine.dashboard.export');
+
+Route::get('/vaccine-ranking-export', [VaccineDashboardController::class, 'exportRanking']);
+Route::get('/vaccine-records-export', [VaccineDashboardController::class, 'exportRecords']);

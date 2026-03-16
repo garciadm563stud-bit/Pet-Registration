@@ -3,12 +3,12 @@ export default function AppLogo() {
     return (
         <div className="flex items-center gap-2">
             <img
-                src="/images/logo.png"
+                src="/images/logo1.png"
                 alt="Pet Registration Logo"
-                className="h-10 w-10 object-contain"
+                className="h-14 w-14 object-contain"
             />
             <span className="font-semibold text-lg">
-                PetRegistry
+                Pet Registration
             </span>
         </div>
     );

@@ -60,7 +60,7 @@ class PetFactory extends Factory
                 ? $this->faker->randomElement($breedsDog)
                 : $this->faker->randomElement($breedsCat),
 
-            'birth_date' => $this->faker->dateTimeBetween('-5 years', '-2 months'),
+
 
             'gender' => $this->faker->randomElement(['Male', 'Female']),
 

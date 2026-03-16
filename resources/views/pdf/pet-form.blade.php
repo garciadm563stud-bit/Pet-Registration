@@ -14,139 +14,94 @@
             margin: 0;
         }
 
-        /* GRID */
         .grid {
             width: 100%;
             border-collapse: collapse;
-            border-spacing: 0 12mm;
-            /* only vertical spacing */
             table-layout: fixed;
         }
 
         .grid td:first-child {
             padding-right: 8mm;
-            /* center cut space */
         }
 
         .grid td:last-child {
             padding-left: 8mm;
-            /* center cut space */
         }
 
         .grid td {
-
             width: 50%;
-
             padding: 6mm;
-
             vertical-align: top;
-
             box-sizing: border-box;
         }
 
-        /* FORM */
         .coupon {
-
             width: 100%;
-
-            height: 113mm;
-
+            height: 115mm;
+            /* slightly increased */
             border: 2px solid #2E7D32;
-
             border-radius: 10px;
-
-            padding: 16px 18px;
-
+            padding: 14px 16px;
+            /* reduced padding */
             box-sizing: border-box;
-
             position: relative;
         }
 
-        /* WATERMARK */
         .watermark {
-
             position: absolute;
-
-            width: 160px;
-            /* ✅ increase size (adjust as needed) */
-
-            height: 160px;
-            /* keep proportional */
-
-            top: 55%;
+            width: 150px;
+            height: 150px;
+            top: 52%;
             left: 50%;
-
             transform: translate(-50%, -50%);
-
-            opacity: 0.06;
-            /* lighter watermark */
-
+            opacity: 0.05;
             z-index: 0;
-            /* behind form */
-
         }
 
-        /* HEADER */
         .header {
             text-align: center;
         }
 
         .logo {
             width: 50px;
+            margin-bottom: 2px;
         }
 
         .header-main {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
         .header-sub {
-            font-size: 10px;
+            font-size: 9px;
         }
 
         .header-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             color: #2E7D32;
+            margin-top: 3px;
             margin-bottom: 6px;
         }
 
-        /* FORM */
-        /* FIELD LABEL */
         .label {
-
-            font-size: 10px;
-
-            margin-top: 8px;
-            /* space above label */
-
+            font-size: 9px;
+            margin-top: 5px;
             margin-bottom: 2px;
-            /* space before line */
         }
 
-        /* LINE */
         .line {
-
             border-bottom: 1px solid black;
-
-            height: 16px;
-
+            height: 14px;
             width: 100%;
-
-            margin-bottom: 6px;
-            /* space after line */
+            margin-bottom: 4px;
         }
 
-        /* ROW (Barangay + Contact, Civil Status + Sex) */
         .row {
-
             width: 100%;
-
-            margin-top: 6px;
-
-            margin-bottom: 6px;
+            margin-top: 4px;
+            margin-bottom: 4px;
         }
-
 
         .col {
             width: 48%;
@@ -157,38 +112,21 @@
             float: right;
         }
 
-        /* SIGNATURE FIXED */
         .signature {
-
-            margin-top: 22px;
-
+            margin-top: 25px;
+            /* reduced */
             text-align: center;
-            /* ✅ centers everything */
-
         }
-
 
         .signature-line {
-
             border-bottom: 1px solid black;
-
             width: 60%;
-
             margin: 0 auto;
-            /* ✅ centers the line */
-
         }
 
-
         .signature-text {
-
-            font-size: 10px;
-
-            margin-top: 4px;
-
-            text-align: center;
-            /* ✅ centers text */
-
+            font-size: 9px;
+            margin-top: 3px;
         }
     </style>
 
@@ -199,27 +137,13 @@
     <table class="grid">
 
         <tr>
-
-            <td>
-                @include('pdf.owner-form-single')
-            </td>
-
-            <td>
-                @include('pdf.owner-form-single')
-            </td>
-
+            <td>@include('pdf.pet-form-single')</td>
+            <td>@include('pdf.pet-form-single')</td>
         </tr>
 
         <tr>
-
-            <td>
-                @include('pdf.owner-form-single')
-            </td>
-
-            <td>
-                @include('pdf.owner-form-single')
-            </td>
-
+            <td>@include('pdf.pet-form-single')</td>
+            <td>@include('pdf.pet-form-single')</td>
         </tr>
 
     </table>

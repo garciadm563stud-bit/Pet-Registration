@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('lot_batch_no')->nullable();
             $table->date('next_schedule')->nullable();
             $table->string('administering_personnel')->nullable();
+    $table->string('vaccine_brand')->nullable();
 
             $table->timestamps();
         });
