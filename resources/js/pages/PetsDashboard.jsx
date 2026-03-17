@@ -357,6 +357,50 @@ function closeForm() {
 }
 
 
+// function submitPet(e) {
+//   e.preventDefault();
+
+//   const ageValue = Number(form.data.age_value);
+//   const ageUnit = form.data.age_unit ?? "Years";
+
+//   let finalAge = null;
+
+//   if (!isNaN(ageValue) && form.data.age_value !== "") {
+//     if (ageUnit === "Months") {
+//       if (ageValue >= 12) {
+//         const years = Math.floor(ageValue / 12);
+//         const months = ageValue % 12;
+
+//         finalAge =
+//           months === 0
+//             ? `${years} Year${years > 1 ? "s" : ""} Old`
+//             : `${years} Year${years > 1 ? "s" : ""} ${months} Month${months > 1 ? "s" : ""} Old`;
+//       } else {
+//         finalAge = `${ageValue} Month${ageValue > 1 ? "s" : ""} Old`;
+//       }
+//     } else {
+//       finalAge = `${ageValue} Year${ageValue > 1 ? "s" : ""} Old`;
+//     }
+//   }
+
+//   // ✅ UPDATE FORM STATE FIRST (SYNC STYLE)
+//   form.transform((data) => ({
+//     ...data,
+//     age: finalAge,
+//   }));
+
+//   if (!editingPet) {
+//     form.post("/pets", {
+//       forceFormData: true,
+//       onSuccess: () => closeForm(),
+//     });
+//   } else {
+//     form.put(`/pets/${editingPet.id}`, {
+//       forceFormData: true,
+//       onSuccess: () => closeForm(),
+//     });
+//   }
+// }
 function submitPet(e) {
   e.preventDefault();
 
@@ -383,22 +427,27 @@ function submitPet(e) {
     }
   }
 
-  // ✅ UPDATE FORM STATE FIRST (SYNC STYLE)
-  form.transform((data) => ({
-    ...data,
-    age: finalAge,
-  }));
-
   if (!editingPet) {
-    form.post("/pets", {
-      forceFormData: true,
-      onSuccess: () => closeForm(),
-    });
+    form
+      .transform((data) => ({
+        ...data,
+        age: finalAge,
+      }))
+      .post("/pets", {
+        forceFormData: true,
+        onSuccess: () => closeForm(),
+      });
   } else {
-    form.put(`/pets/${editingPet.id}`, {
-      forceFormData: true,
-      onSuccess: () => closeForm(),
-    });
+    form
+      .transform((data) => ({
+        ...data,
+        age: finalAge,
+        _method: "put", // ✅ VERY IMPORTANT
+      }))
+      .post(`/pets/${editingPet.id}`, {
+        forceFormData: true,
+        onSuccess: () => closeForm(),
+      });
   }
 }
 function confirmDelete(p) {

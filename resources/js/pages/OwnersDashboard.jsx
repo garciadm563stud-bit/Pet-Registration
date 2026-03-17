@@ -594,7 +594,24 @@ function submitOwner(e) {
   }
 
   // ✅ UPDATE
-  form.put(`/owners/${editingOwner.id}`, {
+  // form.put(`/owners/${editingOwner.id}`, {
+  //   forceFormData: true,
+  //   onSuccess: () => {
+  //     Swal.fire({
+  //       icon: "success",
+  //       title: "Owner updated successfully!",
+  //       timer: 1400,
+  //       showConfirmButton: false,
+  //     });
+  //     closeForm();
+  //   },
+  // });
+  form
+  .transform((data) => ({
+    ...data,
+    _method: "put",
+  }))
+  .post(`/owners/${editingOwner.id}`, {
     forceFormData: true,
     onSuccess: () => {
       Swal.fire({
