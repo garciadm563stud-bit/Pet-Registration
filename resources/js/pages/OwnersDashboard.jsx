@@ -606,23 +606,23 @@ function submitOwner(e) {
   //     closeForm();
   //   },
   // });
-  form
-  .transform((data) => ({
-    ...data,
-    _method: "put",
-  }))
-  .post(`/owners/${editingOwner.id}`, {
-    forceFormData: true,
-    onSuccess: () => {
-      Swal.fire({
-        icon: "success",
-        title: "Owner updated successfully!",
-        timer: 1400,
-        showConfirmButton: false,
-      });
-      closeForm();
-    },
-  });
+ form.transform((data) => ({
+  ...data,
+  _method: "put",
+}));
+
+form.post(`/owners/${editingOwner.id}`, {
+  forceFormData: true,
+  onSuccess: () => {
+    Swal.fire({
+      icon: "success",
+      title: "Owner updated successfully!",
+      timer: 1400,
+      showConfirmButton: false,
+    });
+    closeForm();
+  },
+});
 }
 
 

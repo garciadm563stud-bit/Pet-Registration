@@ -427,27 +427,28 @@ function submitPet(e) {
     }
   }
 
+  // ✅ APPLY TRANSFORM FIRST (DO NOT CHAIN)
   if (!editingPet) {
-    form
-      .transform((data) => ({
-        ...data,
-        age: finalAge,
-      }))
-      .post("/pets", {
-        forceFormData: true,
-        onSuccess: () => closeForm(),
-      });
+    form.transform((data) => ({
+      ...data,
+      age: finalAge,
+    }));
+
+    form.post("/pets", {
+      forceFormData: true,
+      onSuccess: () => closeForm(),
+    });
   } else {
-    form
-      .transform((data) => ({
-        ...data,
-        age: finalAge,
-        _method: "put", // ✅ VERY IMPORTANT
-      }))
-      .post(`/pets/${editingPet.id}`, {
-        forceFormData: true,
-        onSuccess: () => closeForm(),
-      });
+    form.transform((data) => ({
+      ...data,
+      age: finalAge,
+      _method: "put", // ✅ IMPORTANT FOR UPDATE
+    }));
+
+    form.post(`/pets/${editingPet.id}`, {
+      forceFormData: true,
+      onSuccess: () => closeForm(),
+    });
   }
 }
 function confirmDelete(p) {
