@@ -58,9 +58,6 @@ RUN apt-get update && apt-get install -y nodejs npm
 RUN npm install
 RUN npm run build
 
-# Create storage link for uploaded images
-RUN php artisan storage:link
-
 # Fix permissions
 RUN chmod -R 775 storage bootstrap/cache
 
@@ -71,4 +68,5 @@ EXPOSE 8080
 CMD php artisan config:clear && \
     php artisan route:clear && \
     php artisan cache:clear && \
+    php artisan storage:link && \
     php artisan serve --host=0.0.0.0 --port=8080
