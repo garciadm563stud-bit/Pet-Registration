@@ -53,22 +53,19 @@ COPY . .
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node and build frontend assets
+# Install Node and build frontend
 RUN apt-get update && apt-get install -y nodejs npm
 RUN npm install
 RUN npm run build
 
-# Ensure Laravel storage folders exist
-RUN mkdir -p storage/framework/{sessions,views,cache} \
-    && chmod -R 775 storage bootstrap/cache
-
-# Cache Laravel configuration
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+# Fix storage permissions
+RUN chmod -R 775 storage bootstrap/cache
 
 # Expose Railway port
 EXPOSE 8080
 
-# Start Laravel server
-CMD ["php","artisan","serve","--host=0.0.0.0","--port=8080"]
+# Start Laravel (with cache clear)
+CMD php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan cache:clear && \
+    php artisan serve --host=0.0.0.0 --port=8080
