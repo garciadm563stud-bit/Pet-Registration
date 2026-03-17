@@ -489,24 +489,7 @@ const capitalizeWords = (text) => {
 
         {/* VACCINES HEADER */}
     {/* VACCINES SECTION */}
-{/* <div className="card shadow-sm mb-4">
-  <div className="card-header fw-bold text-center position-relative fs-5">
-    Vaccination Service Rendered
-
-    
-    <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}>
-      {!showVaxForm ? (
-        <button className="btn btn-primary btn-sm" onClick={openAddVaccine}>
-          + Add Vaccine
-        </button>
-      ) : (
-        <button className="btn btn-outline-secondary btn-sm" onClick={closeVaxForm}>
-          Close Form
-        </button>
-      )}
-    </div>
-  </div> */}
-  <div className="card-header fw-bold fs-5">
+<div className="card shadow-sm mb-4">
   <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
 
     {/* LEFT (empty spacer for perfect center balance) */}
@@ -531,7 +514,6 @@ const capitalizeWords = (text) => {
     </div>
 
   </div>
-</div>
 
   <div className="card-body">
     {/* ✅ INLINE ADD/EDIT VACCINE FORM */}
