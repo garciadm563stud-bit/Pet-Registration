@@ -53,21 +53,25 @@ COPY . .
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node and build frontend
+# Install NodeJS (needed for React build)
 RUN apt-get update && apt-get install -y nodejs npm
+
+# Build frontend
 RUN npm install
 RUN npm run build
 
 # Fix permissions
 RUN chmod -R 775 storage bootstrap/cache
 
+# IMPORTANT: create storage link for images
+RUN php artisan storage:link
+
+# Cache configs
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
+
 EXPOSE 8080
 
 # Start Laravel
-CMD php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan cache:clear && \
-    php artisan storage:link && \
-    php -S 0.0.0.0:8080 -t public
-
-    
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
