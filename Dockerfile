@@ -31,7 +31,7 @@
 # CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
 FROM dunglas/frankenphp:php8.2
 
-# Install PHP extensions
+# Install required PHP extensions
 RUN install-php-extensions \
     gd \
     pdo_mysql \
@@ -47,31 +47,28 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copy project
+# Copy project files
 COPY . .
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install NodeJS (needed for React build)
+# Install Node and build frontend
 RUN apt-get update && apt-get install -y nodejs npm
-
-# Build frontend
 RUN npm install
 RUN npm run build
+
+# Create storage link for uploaded images
+RUN php artisan storage:link
 
 # Fix permissions
 RUN chmod -R 775 storage bootstrap/cache
 
-# IMPORTANT: create storage link for images
-RUN php artisan storage:link
-
-# Cache configs
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
-
+# Expose Railway port
 EXPOSE 8080
 
 # Start Laravel
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+CMD php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan cache:clear && \
+    php artisan serve --host=0.0.0.0 --port=8080
