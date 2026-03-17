@@ -36,7 +36,6 @@ RUN chmod -R 777 storage bootstrap/cache
 
 EXPOSE 8080
 
-CMD php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan cache:clear && \
+CMD php artisan optimize:clear && \
+    php artisan storage:link && \
     php -S 0.0.0.0:8080 -t public
