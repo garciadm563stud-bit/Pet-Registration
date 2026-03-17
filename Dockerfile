@@ -31,7 +31,7 @@
 # CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
 FROM dunglas/frankenphp:php8.2
 
-# Install required PHP extensions
+# Install PHP extensions
 RUN install-php-extensions \
     gd \
     pdo_mysql \
@@ -47,7 +47,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copy project files
+# Copy project
 COPY . .
 
 # Install Laravel dependencies
@@ -58,14 +58,16 @@ RUN apt-get update && apt-get install -y nodejs npm
 RUN npm install
 RUN npm run build
 
-# Fix storage permissions
+# Fix permissions
 RUN chmod -R 775 storage bootstrap/cache
 
-# Expose Railway port
 EXPOSE 8080
 
-# Start Laravel (with cache clear)
+# Start Laravel
 CMD php artisan config:clear && \
     php artisan route:clear && \
     php artisan cache:clear && \
-    php artisan serve --host=0.0.0.0 --port=8080
+    php artisan storage:link && \
+    php -S 0.0.0.0:8080 -t public
+
+    
