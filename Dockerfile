@@ -58,16 +58,13 @@ RUN apt-get update && apt-get install -y nodejs npm
 RUN npm install
 RUN npm run build
 
-# Create storage link for uploaded images
-RUN php artisan storage:link
-
-# Fix permissions
+# Fix storage permissions
 RUN chmod -R 775 storage bootstrap/cache
 
 # Expose Railway port
 EXPOSE 8080
 
-# Start Laravel
+# Start Laravel (with cache clear)
 CMD php artisan config:clear && \
     php artisan route:clear && \
     php artisan cache:clear && \
