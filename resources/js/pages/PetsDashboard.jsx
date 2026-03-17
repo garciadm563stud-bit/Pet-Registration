@@ -141,6 +141,11 @@ function openAddForm() {
 const petFormRef = React.useRef(null);
   const [cameraOpen, setCameraOpen] = React.useState(false);
   const [startingCamera, setStartingCamera] = React.useState(false);
+  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+const [cameraFacing, setCameraFacing] = React.useState(
+  isMobile ? "environment" : "user"
+);
 const [previewIds, setPreviewIds] = React.useState({ pet_uid: "", registration_no: "" });
 const [loadingPreview, setLoadingPreview] = React.useState(false);
 async function loadPreviewId(nextSpecies) {
@@ -211,10 +216,12 @@ function scrollToPetForm() {
 
       try {
         setStartingCamera(true);
-
+  if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+    }
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: "environment", // try back cam if available (PC will ignore)
+            facingMode: cameraFacing, // try back cam if available (PC will ignore)
             width: { ideal: 1280 },
             height: { ideal: 720 },
           },
@@ -257,7 +264,7 @@ function scrollToPetForm() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraOpen]);
+  },  [cameraOpen, cameraFacing]);
 
 //   function capturePhoto() {
 //     const video = videoRef.current;
@@ -309,15 +316,17 @@ function scrollToPetForm() {
   const ctx = canvas.getContext("2d");
 
   // ✅ Flip back before drawing (so saved image is NOT inverted)
+ if (cameraFacing === "user") {
   ctx.translate(w, 0);
   ctx.scale(-1, 1);
+}
   ctx.drawImage(video, 0, 0, w, h);
 
   canvas.toBlob(
     (blob) => {
       if (!blob) return;
 
-      const file = new File([blob], "owner_photo.jpg", { type: "image/jpeg" });
+      const file = new File([blob], "pet_photo.jpg", { type: "image/jpeg" });
       form.setData("photo", file);
       form.setData("remove_photo", false);
 
@@ -852,7 +861,7 @@ form.setData("remove_photo", false);
                                     background: "#000",
                                     maxHeight: 360,
                                     objectFit: "cover",
-                                    transform: "scaleX(-1)",
+                                    transform: cameraFacing === "user" ? "scaleX(-1)" : "none",
                                   }}
                                 />
 
@@ -865,6 +874,26 @@ form.setData("remove_photo", false);
                                   >
                                     {startingCamera ? "Loading..." : "Capture Photo"}
                                   </button>
+                                  {isMobile && (
+  <button
+    type="button"
+    className="btn btn-warning w-100"
+    onClick={() => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+      }
+
+      setCameraFacing(prev =>
+        prev === "user" ? "environment" : "user"
+      );
+
+      setCameraOpen(false);
+      setTimeout(() => setCameraOpen(true), 200);
+    }}
+  >
+    Switch Camera
+  </button>
+)}
                                   <button
                                     type="button"
                                     className="btn btn-secondary w-100"
