@@ -450,7 +450,7 @@ Download Excel
 
 
 
-<div className="card-body p-0">
+{/* <div className="card-body p-0">
 
 <div className="table-responsive">
 
@@ -597,10 +597,213 @@ records.data.map((v)=>(
 
 </div>
 
+</div> */}
+
+
+<div className="card shadow-sm mb-4">
+
+  {/* ✅ HEADER FIX */}
+  <div className="card-header fw-bold fs-5">
+    <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
+
+      {/* Spacer (keeps title centered) */}
+      <div style={{ width: 120 }} />
+
+      {/* Title */}
+      <div className="text-center flex-grow-1">
+        Vaccination Service Rendered
+      </div>
+
+      {/* Button */}
+      <div>
+        {!showVaxForm ? (
+          <button className="btn btn-primary btn-sm" onClick={openAddVaccine}>
+            + Add Vaccine
+          </button>
+        ) : (
+          <button className="btn btn-outline-secondary btn-sm" onClick={closeVaxForm}>
+            Close Form
+          </button>
+        )}
+      </div>
+
+    </div>
+  </div>
+
+  <div className="card-body p-0">
+
+    {/* ========================= */}
+    {/* ✅ DESKTOP TABLE */}
+    {/* ========================= */}
+    <div className="table-responsive d-none d-md-block">
+      <table className="table table-hover align-middle text-center mb-0">
+        <thead className="table-light">
+          <tr>
+            <th>Owner Pic</th>
+            <th>Owner</th>
+            <th>Contact</th>
+            <th>Brgy</th>
+            <th>Pet Pic</th>
+            <th>Pet Name</th>
+            <th>Species</th>
+            <th>Vaccine</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {records.data.length === 0 ? (
+            <tr>
+              <td colSpan="9" className="text-center p-4 text-muted">
+                No records yet
+              </td>
+            </tr>
+          ) : (
+            records.data.map((v) => (
+              <tr key={v.id}>
+
+                {/* OWNER PIC */}
+                <td>
+                  <img
+                    src={
+                      v.pet?.owner?.photo_path
+                        ? (v.pet.owner.photo_path.startsWith("http")
+                            ? v.pet.owner.photo_path
+                            : `/storage/${v.pet.owner.photo_path}`)
+                        : "/images/no-image.png"
+                    }
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      aspectRatio: "1/1",
+                      border: "1px solid #eee",
+                      cursor: "pointer"
+                    }}
+                    onClick={() =>
+                      setViewImage(
+                        v.pet?.owner?.photo_path?.startsWith("http")
+                          ? v.pet.owner.photo_path
+                          : `/storage/${v.pet.owner.photo_path}`
+                      )
+                    }
+                  />
+                </td>
+
+                {/* OWNER NAME */}
+                <td>
+                  {capitalizeWords(v.pet?.owner?.first_name)}{" "}
+                  {capitalizeWords(v.pet?.owner?.last_name)}
+                </td>
+
+                <td>{v.pet?.owner?.contact_number}</td>
+                <td>{v.pet?.owner?.barangay}</td>
+
+                {/* PET PIC */}
+                <td>
+                  <img
+                    src={
+                      v.pet?.photo_path
+                        ? (v.pet.photo_path.startsWith("http")
+                            ? v.pet.photo_path
+                            : `/storage/${v.pet.photo_path}`)
+                        : "/images/no-image.png"
+                    }
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      aspectRatio: "1/1",
+                      border: "1px solid #eee",
+                      cursor: "pointer"
+                    }}
+                    onClick={() =>
+                      setViewImage(
+                        v.pet?.photo_path?.startsWith("http")
+                          ? v.pet.photo_path
+                          : `/storage/${v.pet.photo_path}`
+                      )
+                    }
+                  />
+                </td>
+
+                <td>{capitalizeWords(v.pet?.pet_name)}</td>
+                <td>{v.pet?.species}</td>
+                <td>{capitalizeWords(v.vaccine_name ?? v.vaccine_choice)}</td>
+                <td>{v.date_administered}</td>
+
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+
+    {/* ========================= */}
+    {/* ✅ MOBILE CARD VIEW */}
+    {/* ========================= */}
+    <div className="d-md-none p-2">
+      {records.data.length === 0 ? (
+        <div className="text-center text-muted p-4">
+          No records yet
+        </div>
+      ) : (
+        records.data.map((v) => (
+          <div key={v.id} className="card mb-2 shadow-sm">
+            <div className="card-body">
+
+              {/* PET */}
+              <div className="d-flex gap-2 align-items-center mb-2">
+                <img
+                  src={
+                    v.pet?.photo_path
+                      ? `/storage/${v.pet.photo_path}`
+                      : "/images/no-image.png"
+                  }
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: "50%",
+                    objectFit: "cover"
+                  }}
+                />
+                <div>
+                  <div className="fw-bold">
+                    {capitalizeWords(v.pet?.pet_name)}
+                  </div>
+                  <div className="small text-muted">
+                    {v.pet?.species}
+                  </div>
+                </div>
+              </div>
+
+              {/* INFO */}
+              <div className="small">
+                <div>
+                  <b>Owner:</b>{" "}
+                  {capitalizeWords(v.pet?.owner?.first_name)}{" "}
+                  {capitalizeWords(v.pet?.owner?.last_name)}
+                </div>
+
+                <div><b>Contact:</b> {v.pet?.owner?.contact_number}</div>
+                <div><b>Brgy:</b> {v.pet?.owner?.barangay}</div>
+                <div>
+                  <b>Vaccine:</b>{" "}
+                  {capitalizeWords(v.vaccine_name ?? v.vaccine_choice)}
+                </div>
+                <div><b>Date:</b> {v.date_administered}</div>
+              </div>
+
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+
+  </div>
 </div>
-
-
-
 {/* RECORD PAGINATION */}
 
 {records.links && records.links.length > 3 && (

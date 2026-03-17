@@ -489,11 +489,11 @@ const capitalizeWords = (text) => {
 
         {/* VACCINES HEADER */}
     {/* VACCINES SECTION */}
-<div className="card shadow-sm mb-4">
+{/* <div className="card shadow-sm mb-4">
   <div className="card-header fw-bold text-center position-relative fs-5">
     Vaccination Service Rendered
 
-    {/* Button on the right, but header stays centered */}
+    
     <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}>
       {!showVaxForm ? (
         <button className="btn btn-primary btn-sm" onClick={openAddVaccine}>
@@ -505,7 +505,33 @@ const capitalizeWords = (text) => {
         </button>
       )}
     </div>
+  </div> */}
+  <div className="card-header fw-bold fs-5">
+  <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
+
+    {/* LEFT (empty spacer for perfect center balance) */}
+    <div style={{ width: 120 }} />
+
+    {/* CENTER TITLE */}
+    <div className="text-center flex-grow-1">
+      Vaccination Service Rendered
+    </div>
+
+    {/* RIGHT BUTTON */}
+    <div>
+      {!showVaxForm ? (
+        <button className="btn btn-primary btn-sm">
+          + Add Vaccine
+        </button>
+      ) : (
+        <button className="btn btn-outline-secondary btn-sm">
+          Close Form
+        </button>
+      )}
+    </div>
+
   </div>
+</div>
 
   <div className="card-body">
     {/* ✅ INLINE ADD/EDIT VACCINE FORM */}
