@@ -69,3 +69,5 @@ CMD php artisan config:clear && \
     php artisan cache:clear && \
     php artisan storage:link && \
     php -S 0.0.0.0:8080 -t public
+
+    
